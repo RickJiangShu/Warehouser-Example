@@ -1,6 +1,6 @@
 ﻿/*
  * Author:  Rick
- * Create:  2017/8/1 10:26:21
+ * Create:  2017/8/1 15:47:14
  * Email:   rickjiangshu@gmail.com
  * Follow:  https://github.com/RickJiangShu
  */
@@ -9,12 +9,10 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// 映射器 Mapper
+/// 回收器
 /// </summary>
-public class Mapper
+public interface IRecycler
 {
-    public static string GetPath(string resName)
-    {
-        return "";
-    }
+    void OnPushToPool();
+    void OnPullFromPool();
 }
