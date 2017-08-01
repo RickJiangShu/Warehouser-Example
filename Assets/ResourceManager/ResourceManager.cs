@@ -18,8 +18,12 @@ public class ResourceManager
     /// <summary>
     /// 获取PoolKey通过InstanceID
     /// </summary>
-    private static Dictionary<int, string> poolKeysOfInstances;
-    private static Dictionary<string, Object> resources;
+    private static Dictionary<int, string> poolKeysOfInstances = new Dictionary<int,string>();
+
+    /// <summary>
+    /// 所有缓存的Resource
+    /// </summary>
+    private static Dictionary<string, Object> resources = new Dictionary<string,Object>();
 
 
     public static GameObject GetInstance(string resName)
@@ -149,6 +153,7 @@ public class ResourceManager
         result = null;
         return false;
     }
+
 
 }
 

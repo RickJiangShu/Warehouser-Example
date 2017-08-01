@@ -12,7 +12,7 @@ using System.Collections.Generic;
 /// </summary>
 public class ObjectPool
 {
-    private static Dictionary<string, List<object>> objectsOfPool;
+    private static Dictionary<string, List<object>> objectsOfPool = new Dictionary<string,List<object>>();
 
     public static void Push(string poolKey, object obj)
     {
@@ -26,32 +26,32 @@ public class ObjectPool
         }
     }
 
-    public static T Pull<T>(string poolKey)
-    {
-        return (T)Pull(poolKey);
-    }
-
-    public static object Pull(string poolKey)
+    public static T Pull<T>(string poolKey) where T : class
     {
         List<object> objects = objectsOfPool[poolKey];
         object obj = objects[0];
         objects.RemoveAt(0);
-        return obj;
+        return (T)obj;
     }
 
-    public static bool TryPull<T>(string poolKey, out T obj)
+    public static object Pull(string poolKey)
     {
-        return TryPull(poolKey,out obj);
+        return Pull<object>(poolKey);
     }
-    public static bool TryPull(string poolKey,out object obj)
+
+    public static bool TryPull<T>(string poolKey, out T obj) where T : class
     {
         if (Contains(poolKey))
         {
-            obj = Pull(poolKey);
+            obj = (T)Pull(poolKey);
             return true;
         }
         obj = null;
         return false;
+    }
+    public static bool TryPull(string poolKey,out object obj)
+    {
+        return TryPull<object>(poolKey, out obj);
     }
 
     public static bool Contains(string poolKey)
