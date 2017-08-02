@@ -22,13 +22,21 @@ namespace Plugins.ConfigManager
         /// </summary>
         private static readonly string[] IGNORE_EXTENSIONS = new string[1] { ".meta" };
 
-        private const char SeparatorChar = '/';
+        /// <summary>
+        /// 重命时的分隔符
+        /// </summary>
+        private const char SAME_NAME_SEPARATOR = '/';
+
+        /// <summary>
+        /// 路径映射队列输出路径
+        /// </summary>
+        private const string PAIRS_OUTPUT = "Assets/PathPairs.asset";
 
         [MenuItem("Resource/Map Path")]
         private static void MapPath()
         {
             //所有对
-            List<Pair> pairs = new List<Pair>();
+            List<PathPair> pairs = new List<PathPair>();
 
             //映射Resource
             DirectoryInfo resourceDir = new DirectoryInfo(Application.dataPath + Path.DirectorySeparatorChar + "Resources");
@@ -42,7 +50,7 @@ namespace Plugins.ConfigManager
 
                     string name = file.Name.Replace(file.Extension, "");
                     string path = ConvertPath(file.FullName);
-                    pairs.Add(new Pair(name, path));
+                    pairs.Add(new PathPair(name, path));
                 }
             }
 
@@ -54,38 +62,48 @@ namespace Plugins.ConfigManager
             if (sameNames.Count > 0)
             {
                 //将同名的放入字典
-                Dictionary<string, List<Pair>> allPairs = new Dictionary<string, List<Pair>>();
+                Dictionary<string, List<PathPair>> allPairs = new Dictionary<string, List<PathPair>>();
 
-
-                //替换重名的分隔符
+             
                 foreach (string sameName in sameNames)
                 {
-                    List<Pair> pairsOfSameName = new List<Pair>();//所有同名的Pair
-                    foreach (Pair pair in pairs)
+                    List<PathPair> pairsOfSameName = new List<PathPair>();//所有同名的Pair
+                    foreach (PathPair pair in pairs)
                     {
                         if (pair.name == sameName)
                         {
-                            pair.id = pair.id.Replace(Path.DirectorySeparatorChar, SeparatorChar);
+                            //替换重名的分隔符
+                            pair.id = pair.id.Replace(Path.DirectorySeparatorChar, SAME_NAME_SEPARATOR);
                             pairsOfSameName.Add(pair);
                         }
                     }
+                    //装入字典
                     allPairs.Add(sameName, pairsOfSameName);
+
+                    //定义错误字符
+                    pairs.Add(new PathPair(sameName, PathPair.ERROR_SAMENAME));
                 }
 
                 //警告重名
                 for(int i = 0,j = sameNames.Count;i<j;i++)
                 {
-                    List<Pair> pairsOfSameName = allPairs[sameNames[i]];
+                    List<PathPair> pairsOfSameName = allPairs[sameNames[i]];
                     string ids = "";
-                    foreach (Pair pair in pairsOfSameName)
+                    foreach (PathPair pair in pairsOfSameName)
                     {
                         ids += pair.id + "、";
                     }
                     ids = ids.Remove(ids.Length - 1, 1);
-                    Debug.Log(string.Format(Tips.SAME_NAME, sameNames[i], pairsOfSameName.Count) + ids);
+                    Debug.Log(string.Format(Tips.SAME_NAME_EDITOR, sameNames[i], pairsOfSameName.Count) + ids);
                 }
             }
-            
+
+            //生成PathMap
+            PathPairs pathMap = new PathPairs();
+            pathMap.pairs = pairs.ToArray();
+
+            //创建PathMap
+            AssetDatabase.CreateAsset(pathMap, PAIRS_OUTPUT);
         }
 
         /// <summary>
@@ -118,11 +136,11 @@ namespace Plugins.ConfigManager
         /// <summary>
         /// 过滤（通过不断递归，直至没有重复ID）
         /// </summary>
-        private static void Filter(List<Pair> pairs, out List<string> sameNames)
+        private static void Filter(List<PathPair> pairs, out List<string> sameNames)
         {
             //记录次数
             Dictionary<string, int> recordCount = new Dictionary<string, int>();
-            foreach (Pair pair in pairs)
+            foreach (PathPair pair in pairs)
             {
                 if (recordCount.ContainsKey(pair.id))
                     recordCount[pair.id]++;
@@ -145,7 +163,7 @@ namespace Plugins.ConfigManager
             //将同名的加上父目录名
             foreach (string replaceId in sameNames)
             {
-                foreach (Pair pair in pairs)
+                foreach (PathPair pair in pairs)
                 {
                     if (pair.id == replaceId)
                     {
@@ -171,22 +189,7 @@ namespace Plugins.ConfigManager
             return path.Substring(parentIndex + 1, searchIndex - parentIndex) + id;
         }
 
-        /// <summary>
-        /// ID和路径对
-        /// </summary>
-        private class Pair
-        {
-            public string id;//最后的id
-            public string name;
-            public string path;
-
-            public Pair(string name, string path)
-            {
-                this.name = name;
-                this.path = path;
-                this.id = name;
-            }
-        }
+        
     }
 }
 
