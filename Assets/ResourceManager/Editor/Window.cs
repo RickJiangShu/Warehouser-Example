@@ -9,26 +9,44 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 using UnityEditor;
+using System.Text;
 
 namespace Plugins.ResourceManager
 {
     /// <summary>
     /// 映射器编辑器
     /// </summary>
-    public class MapperEditor : ScriptableObject
+    public class Window : EditorWindow
     {
+        /// <summary>
+        /// 配置文件
+        /// </summary>
+        private static Setting setting;
+
         /// <summary>
         /// 忽略的拓展名
         /// </summary>
         private static readonly string[] IGNORE_EXTENSIONS = new string[1] { ".meta" };
 
+        [MenuItem("Window/Resource Manager")]
+        public static Window Get()
+        {
+            return EditorWindow.GetWindow<Window>("Resource Manager");
+        }
 
-        /// <summary>
-        /// 路径映射队列输出路径
-        /// </summary>
-        private const string PAIRS_OUTPUT = "Assets/PathPairs.asset";
+        void Awake()
+        {
+            LoadSetting();
+        }
 
-        [MenuItem("Resource/Map Path")]
+        public void OnGUI()
+        {
+            //Base Settings
+            GUILayout.Label("Base Settings", EditorStyles.boldLabel);
+
+            setting.pathParisOutput = EditorGUILayout.TextField("PathPairs Output", setting.pathParisOutput);
+        }
+
         private static void MapPath()
         {
             //所有对
@@ -84,7 +102,7 @@ namespace Plugins.ResourceManager
             pathMap.pairs = pairs.ToArray();
 
             //创建PathMap
-            AssetDatabase.CreateAsset(pathMap, PAIRS_OUTPUT);
+            AssetDatabase.CreateAsset(pathMap, setting.pathParisOutput + "/" + Setting.PAIRS_ASSET_NAME);
         }
 
         /// <summary>
@@ -113,7 +131,40 @@ namespace Plugins.ResourceManager
             return fullName.Substring(start);
         }
 
-        
+
+        /// <summary>
+        /// 加载Setting
+        /// </summary>
+        private void LoadSetting()
+        {
+            TextAsset asset = Resources.Load<TextAsset>(Setting.PATH);
+            if (asset == null)
+            {
+                setting = new Setting();
+                SaveSetting();
+            }
+            else
+            {
+                setting = JsonUtility.FromJson<Setting>(asset.text);
+            }
+        }
+
+        /// <summary>
+        /// 保存Setting
+        /// </summary>
+        private void SaveSetting()
+        {
+            string json = JsonUtility.ToJson(setting, true);
+            FileStream fileStream;
+            if (!File.Exists(Setting.PATH))
+            {
+                fileStream = File.Create(Setting.PATH);
+            }
+            File.WriteAllText(Setting.PATH, json);
+
+            AssetDatabase.Refresh();
+        }
+
     }
 }
 
