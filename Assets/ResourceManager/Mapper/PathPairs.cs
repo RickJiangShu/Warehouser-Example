@@ -23,9 +23,6 @@ public class PathPairs : ScriptableObject
 [System.Serializable]
 public class PathPair
 {
-    public const string ERROR_SAMENAME = "/0";//同名错误
-
-    public string id;//最后的id
     public string name;
     public string path;
 
@@ -33,6 +30,5 @@ public class PathPair
     {
         this.name = name;
         this.path = path;
-        this.id = name;
     }
 }
