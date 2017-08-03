@@ -31,13 +31,13 @@ namespace Plugins.ResourceManager
         [MenuItem("Window/Resource Manager")]
         public static Window Get()
         {
-            return EditorWindow.GetWindow<Window>("Resource Manager");
+            return EditorWindow.GetWindow<Window>("Resource ");
+        }
+        public void OnEnable()
+        {
+            LoadSetting();  
         }
 
-        void Awake()
-        {
-            LoadSetting();
-        }
 
         public void OnGUI()
         {
@@ -45,9 +45,22 @@ namespace Plugins.ResourceManager
             GUILayout.Label("Base Settings", EditorStyles.boldLabel);
 
             setting.pathParisOutput = EditorGUILayout.TextField("PathPairs Output", setting.pathParisOutput);
+            //
+            //Opertions
+            GUILayout.Label("Opertions", EditorStyles.boldLabel);
+
+            if (GUILayout.Button("Map Paths"))
+            {
+                MapPaths();
+            }
+
+            if (GUI.changed)
+            {
+                SaveSetting();
+            }
         }
 
-        private static void MapPath()
+        private static void MapPaths()
         {
             //所有对
             List<PathPair> pairs = new List<PathPair>();
@@ -135,33 +148,33 @@ namespace Plugins.ResourceManager
         /// <summary>
         /// 加载Setting
         /// </summary>
-        private void LoadSetting()
+        private static void LoadSetting()
         {
-            TextAsset asset = Resources.Load<TextAsset>(Setting.PATH);
-            if (asset == null)
+            if (File.Exists(Setting.PATH))
             {
-                setting = new Setting();
-                SaveSetting();
+                string content = File.ReadAllText(Setting.PATH);
+                setting = JsonUtility.FromJson<Setting>(content);
             }
             else
             {
-                setting = JsonUtility.FromJson<Setting>(asset.text);
+                setting = new Setting();
+                SaveSetting();
             }
         }
 
         /// <summary>
         /// 保存Setting
         /// </summary>
-        private void SaveSetting()
+        private static void SaveSetting()
         {
             string json = JsonUtility.ToJson(setting, true);
             FileStream fileStream;
             if (!File.Exists(Setting.PATH))
             {
                 fileStream = File.Create(Setting.PATH);
+                fileStream.Close();
             }
             File.WriteAllText(Setting.PATH, json);
-
             AssetDatabase.Refresh();
         }
 

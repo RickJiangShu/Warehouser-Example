@@ -16,7 +16,7 @@ namespace Plugins.ResourceManager
         /// <summary>
         /// 输入/输出路径
         /// </summary>
-        public const string PATH = "Assets/Resources/ResourceManagerSetting.json";
+        public const string PATH = "Assets/Resources/ResourceSetting.json";
 
         /// <summary>
         /// 路径映射对名
