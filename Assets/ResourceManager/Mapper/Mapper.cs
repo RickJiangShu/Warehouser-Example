@@ -13,13 +13,17 @@ using UnityEngine;
 /// </summary>
 public class Mapper
 {
-    //private static PathPairs pairs;
-    private static Dictionary<string, string> pairs;
+    private static Dictionary<string, string> mapOfPath;
 
 
-    public static string GetPath(string resName)
+    public static void Initialize(PathPairs pairs)
     {
-        return "";
+        mapOfPath = new Dictionary<string,string>();
+        for (int i = 0, c = pairs.Length; i < c; i++)
+        {
+            PathPair pair = pairs[i];
+            mapOfPath.Add(pair.name, pair.path);
+        }
     }
 
     /// <summary>
@@ -30,12 +34,6 @@ public class Mapper
     /// <returns></returns>
     public static bool TryGetPath(string name, out string path)
     {
-        if (pairs == null)
-        {
-            path = name;
-            return false;
-        }
-        path = name;
-        return true;
+        return mapOfPath.TryGetValue(name, out path);
     }
 }

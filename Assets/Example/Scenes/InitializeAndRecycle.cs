@@ -6,7 +6,7 @@ public class InitializeAndRecycle : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		
+        ResourceManager.Start();
 	}
 	
 	// Update is called once per frame

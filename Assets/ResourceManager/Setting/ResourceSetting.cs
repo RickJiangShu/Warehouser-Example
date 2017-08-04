@@ -23,9 +23,19 @@ namespace Plugins.ResourceManager
         /// </summary>
         public const string PAIRS_ASSET_NAME = "PathPairs.asset";
 
+
         /// <summary>
         /// 路径映射对输出目录
         /// </summary>
         public string pathParisOutput = "Assets/Resources";
+
+
+        /// <summary>
+        /// 路径映射完整路径
+        /// </summary>
+        public string pathPairsPath
+        {
+            get { return pathParisOutput + "/" + PAIRS_ASSET_NAME; }
+        }
     }
 }

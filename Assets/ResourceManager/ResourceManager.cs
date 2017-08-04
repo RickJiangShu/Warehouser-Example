@@ -9,6 +9,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Object = UnityEngine.Object;
+using Plugins.ResourceManager;
 
 /// <summary>
 /// 资源管理器 
@@ -18,30 +19,82 @@ public class ResourceManager
     /// <summary>
     /// 获取PoolKey通过InstanceID
     /// </summary>
-    private static Dictionary<int, string> poolKeysOfInstances = new Dictionary<int,string>();
+    private static Dictionary<int, string> poolKeysOfInstances;
 
     /// <summary>
     /// 所有缓存的Resource
     /// </summary>
-    private static Dictionary<string, Object> resources = new Dictionary<string,Object>();
+    private static Dictionary<string, Object> resources;
 
+    /// <summary>
+    /// 是否启动
+    /// </summary>
+    public static bool isStarted;
 
-    public static GameObject GetInstance(string resName)
+    /// <summary>
+    /// 启动（运行时必先调用）
+    /// </summary>
+    public static void Start()
     {
-        return GetInstance<GameObject>(resName);
+        //加载Setting
+        TextAsset asset = Resources.Load<TextAsset>(ResourceSetting.PATH);
+        if (asset == null)
+        {
+            Debug.LogError(Tips.NO_SETTING);
+            return;
+        }
+        ResourceSetting setting = JsonUtility.FromJson<ResourceSetting>(asset.text);
+
+        //加载PathPairs
+        PathPairs pairs;
+        string pairsPath = setting.pathParisOutput;
+        if (WarehouserUtils.InResources(pairsPath))
+        {
+            pairs = Resources.Load<PathPairs>(pairsPath);
+        }
+        else
+        {
+            //assetBundle加载
+            pairs = null;
+        }
+        if (pairs == null)
+        {
+            Debug.LogError(Tips.NO_PAIRS);
+            return;
+        }
+
+        //Mapper 初始化
+        Mapper.Initialize(pairs);
+
+        //静态变量赋值
+        poolKeysOfInstances = new Dictionary<int, string>();
+        resources = new Dictionary<string, Object>();
+
+        isStarted = true;
+    }
+
+    public static GameObject GetInstance(string name)
+    {
+        return GetInstance<GameObject>(name);
     }
     /// <summary>
     /// 获取资源的实例
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    /// <param name="resName"></param>
+    /// <param name="name"></param>
     /// <returns></returns>
-    public static T GetInstance<T>(string resName) where T : Object
+    public static T GetInstance<T>(string name) where T : Object
     {
-        return GetInstance<T>(resName, resName);
+        return GetInstance<T>(name, name);
     }
-    public static T GetInstance<T>(string resName, string poolKey, bool cacheResource = true,bool supportRecycle = true, params object[] initArgs) where T : Object
+    public static T GetInstance<T>(string name, string poolKey, bool cacheResource = true,bool supportRecycle = true, params object[] initArgs) where T : Object
     {
+        if (!isStarted)
+        {
+            Debug.LogError(Tips.NO_START);
+            return null;
+        }
+
         T instance;
 
         //从对象池取
@@ -56,7 +109,7 @@ public class ResourceManager
         }
 
         //实例化
-        T resource = GetResource<T>(resName, cacheResource);
+        T resource = GetResource<T>(name, cacheResource);
         instance = UnityEngine.Object.Instantiate<T>(resource);
         
         //如果有初始化组件，则初始化
@@ -77,8 +130,13 @@ public class ResourceManager
     /// 回收实例
     /// </summary>
     /// <param name="instance"></param>
-    public static void RecycleInstance(UnityEngine.Object instance)
+    public static void RecycleInstance(Object instance)
     {
+        if (!isStarted)
+        {
+            Debug.LogError(Tips.NO_START);
+        }
+
         int id = instance.GetInstanceID();
         string poolKey;
         if (!poolKeysOfInstances.TryGetValue(id,out poolKey))
@@ -103,26 +161,40 @@ public class ResourceManager
     /// 获取资源
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    /// <param name="resName"></param>
+    /// <param name="name"></param>
     /// <returns></returns>
-    public static T GetResource<T>(string resName, bool cacheResource = true) where T : Object
+    public static T GetResource<T>(string name, bool cacheResource = true) where T : Object
     {
+        if (!isStarted)
+        {
+            Debug.LogError(Tips.NO_START);
+        }
+
         Object resource;
-        if (resources.TryGetValue(resName, out resource))
+        if (resources.TryGetValue(name, out resource))
         {
             return (T)resource;
         }
 
+        //获取路径
+        string path;
+        if (!Mapper.TryGetPath(name, out path))
+        {
+            Debug.LogError(Tips.NO_GET_PATH);
+            return null;
+        }
+
         //加载
-        resource = Resources.Load<T>(resName);
-        
+        resource = Resources.Load<T>(name);
+
         //缓存
         if (cacheResource)
         {
-            resources.Add(resName, resource);
+            resources.Add(name, resource);
         }
 
         return (T)resource;
+        
     }
 
     /// <summary>
@@ -132,6 +204,11 @@ public class ResourceManager
     /// <returns></returns>
     public static bool ContainsResource(string resName)
     {
+        if (!isStarted)
+        {
+            Debug.LogError(Tips.NO_START);
+        }
+
         return resources.ContainsKey(resName);
     }
 

@@ -15,6 +15,16 @@ using UnityEngine;
 public class PathPairs : ScriptableObject
 {
     public PathPair[] pairs;
+
+    public int Length
+    {
+        get { return pairs.Length; }
+    }
+
+    public PathPair this[int i]
+    {
+        get { return pairs[i]; }
+    }
 }
 
 /// <summary>

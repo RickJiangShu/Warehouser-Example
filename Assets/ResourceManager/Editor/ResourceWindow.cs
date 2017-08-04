@@ -115,7 +115,7 @@ namespace Plugins.ResourceManager
             pathMap.pairs = pairs.ToArray();
 
             //创建PathMap
-            AssetDatabase.CreateAsset(pathMap, setting.pathParisOutput + "/" + ResourceSetting.PAIRS_ASSET_NAME);
+            AssetDatabase.CreateAsset(pathMap, setting.pathPairsPath);
         }
 
         /// <summary>
