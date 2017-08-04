@@ -11,7 +11,7 @@ using UnityEngine;
 /// <summary>
 /// 默认Recycler
 /// </summary>
-public class Recycler : MonoBehaviour,IRecycler
+public sealed class Recycler : MonoBehaviour,IRecycler
 {
     public void OnPushToPool()
     {
