@@ -97,12 +97,14 @@ public class Warehouser
         }
 
         T instance;
+        GameObject go;
 
         //从对象池取
         if (ObjectPool.TryPull<T>(poolKey, out instance))
         {
             IRecycler recycler;
-            if (TryGetComponent<IRecycler>(instance, out recycler))
+            go = instance as GameObject;
+            if (go != null && TryGetComponent<IRecycler>(go, out recycler))
             {
                 recycler.OnPullFromPool();
             }
@@ -113,17 +115,29 @@ public class Warehouser
         T resource = GetResource<T>(name, cacheResource);
         instance = UnityEngine.Object.Instantiate<T>(resource);
         
-        //如果有初始化组件，则初始化
-        IInitializer initializer;
-        if (TryGetComponent<IInitializer>(instance, out initializer))
-        {
-            initializer.Initlize(initArgs);
-        }
-
         //建立索引
         int id = instance.GetInstanceID();
         poolKeysOfInstances.Add(id, poolKey);
-        
+
+        //GameObject
+        go = instance as GameObject;
+        if (instance is GameObject)
+        {
+            //如果有初始化组件，则初始化
+            IInitializer initializer;
+            if (TryGetComponent<IInitializer>(go, out initializer))
+            {
+                initializer.Initlize(initArgs);
+            }
+
+            //如果没有回收组件，添加默认
+            IRecycler recycler;
+            if (!TryGetComponent<IRecycler>(go, out recycler))
+            {
+                go.AddComponent<Recycler>();
+            }
+        }
+
         return instance;
     }
 
@@ -147,14 +161,16 @@ public class Warehouser
             return;
         }
 
-        poolKeysOfInstances.Remove(id);
         ObjectPool.Push(poolKey, instance);
 
-        //回收处理
-        IRecycler recycler;
-        if (TryGetComponent<IRecycler>(instance, out recycler))
+        if (instance is GameObject)
         {
-            recycler.OnPushToPool();
+            //回收处理
+            IRecycler recycler;
+            if (TryGetComponent<IRecycler>((GameObject)instance, out recycler))
+            {
+                recycler.OnPushToPool();
+            }
         }
     }
 
@@ -219,6 +235,8 @@ public class Warehouser
         return resources.ContainsKey(resName);
     }
 
+
+
     /// <summary>
     /// 判断实例是否是 GameObject 并且 有对应的组件
     /// </summary>
@@ -226,9 +244,8 @@ public class Warehouser
     /// <param name="instance"></param>
     /// <param name="result"></param>
     /// <returns></returns>
-    private static bool TryGetComponent<T>(Object instance, out T result) where T : class
+    private static bool TryGetComponent<T>(GameObject go, out T result) where T : class
     {
-        GameObject go = instance as GameObject;
         if (go != null)
         {
             result = go.GetComponent<T>();
