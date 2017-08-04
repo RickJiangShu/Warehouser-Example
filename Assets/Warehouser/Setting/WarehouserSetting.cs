@@ -5,18 +5,18 @@
  * Follow:  https://github.com/RickJiangShu
  */
 
-namespace Plugins.ResourceManager
+namespace Plugins.Warehouser
 {
     /// <summary>
     /// RemSettings
     /// </summary>
     [System.Serializable]
-    public class ResourceSetting
+    public class WarehouserSetting
     {
         /// <summary>
         /// 输入/输出路径
         /// </summary>
-        public const string PATH = "Assets/Resources/ResourceSetting.json";
+        public const string PATH = "Assets/Resources/WarehouserSetting.json";
 
         /// <summary>
         /// 路径映射对名

@@ -6,7 +6,7 @@ public class InitializeAndRecycle : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-        ResourceManager.Start();
+        Warehouser.Start();
 	}
 	
 	// Update is called once per frame
@@ -20,7 +20,7 @@ public class InitializeAndRecycle : MonoBehaviour {
         {
             for (int i = 0, j = 10; i < j; i++)
             {
-                ResourceManager.GetInstance("Sphere");
+                Warehouser.GetInstance("Sphere");
             }
         }
     }

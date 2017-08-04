@@ -9,12 +9,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Object = UnityEngine.Object;
-using Plugins.ResourceManager;
+using Plugins.Warehouser;
 
 /// <summary>
 /// 资源管理器 
 /// </summary>
-public class ResourceManager
+public class Warehouser
 {
     /// <summary>
     /// 获取PoolKey通过InstanceID
@@ -37,13 +37,13 @@ public class ResourceManager
     public static void Start()
     {
         //加载Setting
-        TextAsset asset = Resources.Load<TextAsset>(ResourceSetting.PATH);
+        TextAsset asset = Resources.Load<TextAsset>(WarehouserSetting.PATH);
         if (asset == null)
         {
             Debug.LogError(Tips.NO_SETTING);
             return;
         }
-        ResourceSetting setting = JsonUtility.FromJson<ResourceSetting>(asset.text);
+        WarehouserSetting setting = JsonUtility.FromJson<WarehouserSetting>(asset.text);
 
         //加载PathPairs
         PathPairs pairs;

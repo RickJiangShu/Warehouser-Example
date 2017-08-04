@@ -11,27 +11,27 @@ using UnityEngine;
 using UnityEditor;
 using System.Text;
 
-namespace Plugins.ResourceManager
+namespace Plugins.Warehouser
 {
     /// <summary>
     /// 映射器编辑器
     /// </summary>
-    public class ResourceWindow : EditorWindow
+    public class WarehouserWindow : EditorWindow
     {
         /// <summary>
         /// 配置文件
         /// </summary>
-        private static ResourceSetting setting;
+        private static WarehouserSetting setting;
 
         /// <summary>
         /// 忽略的拓展名
         /// </summary>
         private static readonly string[] IGNORE_EXTENSIONS = new string[1] { ".meta" };
 
-        [MenuItem("Window/Resource Manager")]
-        public static ResourceWindow Get()
+        [MenuItem("Window/Warehouser")]
+        public static WarehouserWindow Get()
         {
-            return EditorWindow.GetWindow<ResourceWindow>("Resource");
+            return EditorWindow.GetWindow<WarehouserWindow>("Warehouser");
         }
         public void OnEnable()
         {
@@ -150,14 +150,14 @@ namespace Plugins.ResourceManager
         /// </summary>
         private static void LoadSetting()
         {
-            if (File.Exists(ResourceSetting.PATH))
+            if (File.Exists(WarehouserSetting.PATH))
             {
-                string content = File.ReadAllText(ResourceSetting.PATH);
-                setting = JsonUtility.FromJson<ResourceSetting>(content);
+                string content = File.ReadAllText(WarehouserSetting.PATH);
+                setting = JsonUtility.FromJson<WarehouserSetting>(content);
             }
             else
             {
-                setting = new ResourceSetting();
+                setting = new WarehouserSetting();
                 SaveSetting();
             }
         }
@@ -169,12 +169,12 @@ namespace Plugins.ResourceManager
         {
             string json = JsonUtility.ToJson(setting, true);
             FileStream fileStream;
-            if (!File.Exists(ResourceSetting.PATH))
+            if (!File.Exists(WarehouserSetting.PATH))
             {
-                fileStream = File.Create(ResourceSetting.PATH);
+                fileStream = File.Create(WarehouserSetting.PATH);
                 fileStream.Close();
             }
-            File.WriteAllText(ResourceSetting.PATH, json);
+            File.WriteAllText(WarehouserSetting.PATH, json);
             AssetDatabase.Refresh();
         }
 
