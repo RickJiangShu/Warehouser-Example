@@ -74,9 +74,9 @@ public class Warehouser
         isStarted = true;
     }
 
-    public static GameObject GetInstance(string name)
+    public static GameObject Get(string name)
     {
-        return GetInstance<GameObject>(name);
+        return Get<GameObject>(name);
     }
     /// <summary>
     /// 获取资源的实例
@@ -84,11 +84,11 @@ public class Warehouser
     /// <typeparam name="T"></typeparam>
     /// <param name="name"></param>
     /// <returns></returns>
-    public static T GetInstance<T>(string name) where T : Object
+    public static T Get<T>(string name) where T : Object
     {
-        return GetInstance<T>(name, name);
+        return Get<T>(name, name);
     }
-    public static T GetInstance<T>(string name, string poolKey, bool cacheResource = true,bool supportRecycle = true, params object[] initArgs) where T : Object
+    public static T Get<T>(string name, string poolKey, bool cacheResource = true,bool supportRecycle = true, params object[] initArgs) where T : Object
     {
         if (!isStarted)
         {
@@ -145,11 +145,12 @@ public class Warehouser
     /// 回收实例
     /// </summary>
     /// <param name="instance"></param>
-    public static void RecycleInstance(Object instance)
+    public static void Recycle(Object instance)
     {
         if (!isStarted)
         {
             Debug.LogError(Tips.NO_START);
+            return;
         }
 
         int id = instance.GetInstanceID();
@@ -172,6 +173,22 @@ public class Warehouser
                 recycler.OnPushToPool();
             }
         }
+    }
+
+    /// <summary>
+    /// 销毁实例
+    /// </summary>
+    /// <param name="instace"></param>
+    public static void Destory(Object instace)
+    {
+        if (!isStarted)
+            throw new Exception(Tips.NO_START);
+
+        int id = instace.GetInstanceID();
+        if (poolKeysOfInstances.ContainsKey(id))
+            poolKeysOfInstances.Remove(id);
+
+        Object.Destroy(instace);
     }
 
     /// <summary>
@@ -225,7 +242,7 @@ public class Warehouser
     /// </summary>
     /// <param name="name"></param>
     /// <returns></returns>
-    public static bool ContainsResource(string name)
+    public static bool IsLoaded(string name)
     {
         if (!isStarted)
         {

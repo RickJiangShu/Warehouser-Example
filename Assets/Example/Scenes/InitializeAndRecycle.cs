@@ -23,14 +23,14 @@ public class InitializeAndRecycle : MonoBehaviour {
         {
             for (int i = 0, j = count; i < j; i++)
             {
-                gos[i] = Warehouser.GetInstance("Sphere");
+                gos[i] = Warehouser.Get("Sphere");
             }
         }
         if (GUI.Button(new Rect(0, 50, 100, 50), "Recycle"))
         {
             for (int i = 0; i < count; i++)
             {
-                Warehouser.RecycleInstance(gos[i]);
+                Warehouser.Recycle(gos[i]);
             }
         }
     }
