@@ -44,7 +44,7 @@ namespace Plugins.Warehouser
             //Base Settings
             GUILayout.Label("Base Settings", EditorStyles.boldLabel);
 
-            setting.pathParisOutput = EditorGUILayout.TextField("PathPairs Output", setting.pathParisOutput);
+            setting.pathPairsDirectory = EditorGUILayout.TextField("PathPairs Directory", setting.pathPairsDirectory);
             //
             //Opertions
             GUILayout.Label("Opertions", EditorStyles.boldLabel);
@@ -72,7 +72,7 @@ namespace Plugins.Warehouser
                 FileInfo[] allFiles = resourceDir.GetFiles("*.*", SearchOption.AllDirectories);
                 foreach (FileInfo file in allFiles)
                 {
-                    if (IsIgnore(file.Extension))
+                    if (IsIgnore(file.Name))
                         continue;
 
                     string name = file.Name.Replace(file.Extension, "");
@@ -115,21 +115,34 @@ namespace Plugins.Warehouser
             pathMap.pairs = pairs.ToArray();
 
             //创建PathMap
-            AssetDatabase.CreateAsset(pathMap, setting.pathPairsPath);
+            if (File.Exists(setting.pathPairsPath))
+            {
+                UnityEngine.Object old = AssetDatabase.LoadMainAssetAtPath(setting.pathPairsPath);
+                EditorUtility.CopySerialized(pathMap, old);
+            }
+            else
+                AssetDatabase.CreateAsset(pathMap, setting.pathPairsPath);
         }
 
         /// <summary>
         /// 是否忽略
         /// </summary>
-        /// <param name="extension"></param>
+        /// <param name="fileName"></param>
         /// <returns></returns>
-        private static bool IsIgnore(string extension)
+        private static bool IsIgnore(string fileName)
         {
             for (int i = 0, j = IGNORE_EXTENSIONS.Length; i < j; i++)
             {
-                if (IGNORE_EXTENSIONS[i] == extension)
+                if (IGNORE_EXTENSIONS[i] == Path.GetExtension(fileName))
                     return true;
             }
+
+            if (fileName == Path.GetFileName(WarehouserSetting.PATH))
+                return true;
+
+            if (fileName == WarehouserSetting.PATH_PAIRS_NAME)
+                return true;
+
             return false;
         }
 

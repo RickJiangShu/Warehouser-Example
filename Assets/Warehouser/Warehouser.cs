@@ -186,7 +186,13 @@ public class Warehouser
         }
 
         //加载
-        resource = Resources.Load<T>(name);
+        resource = Resources.Load<T>(path);
+
+        if (resource == null)
+        {
+            Debug.LogError(Tips.NO_GET_RESOURCE_OF + path);
+            return null;
+        }
 
         //缓存
         if (cacheResource)
