@@ -16,12 +16,12 @@ namespace Plugins.ResourceManager
     /// <summary>
     /// 映射器编辑器
     /// </summary>
-    public class Window : EditorWindow
+    public class ResourceWindow : EditorWindow
     {
         /// <summary>
         /// 配置文件
         /// </summary>
-        private static Setting setting;
+        private static ResourceSetting setting;
 
         /// <summary>
         /// 忽略的拓展名
@@ -29,9 +29,9 @@ namespace Plugins.ResourceManager
         private static readonly string[] IGNORE_EXTENSIONS = new string[1] { ".meta" };
 
         [MenuItem("Window/Resource Manager")]
-        public static Window Get()
+        public static ResourceWindow Get()
         {
-            return EditorWindow.GetWindow<Window>("Resource ");
+            return EditorWindow.GetWindow<ResourceWindow>("Resource");
         }
         public void OnEnable()
         {
@@ -115,7 +115,7 @@ namespace Plugins.ResourceManager
             pathMap.pairs = pairs.ToArray();
 
             //创建PathMap
-            AssetDatabase.CreateAsset(pathMap, setting.pathParisOutput + "/" + Setting.PAIRS_ASSET_NAME);
+            AssetDatabase.CreateAsset(pathMap, setting.pathParisOutput + "/" + ResourceSetting.PAIRS_ASSET_NAME);
         }
 
         /// <summary>
@@ -150,14 +150,14 @@ namespace Plugins.ResourceManager
         /// </summary>
         private static void LoadSetting()
         {
-            if (File.Exists(Setting.PATH))
+            if (File.Exists(ResourceSetting.PATH))
             {
-                string content = File.ReadAllText(Setting.PATH);
-                setting = JsonUtility.FromJson<Setting>(content);
+                string content = File.ReadAllText(ResourceSetting.PATH);
+                setting = JsonUtility.FromJson<ResourceSetting>(content);
             }
             else
             {
-                setting = new Setting();
+                setting = new ResourceSetting();
                 SaveSetting();
             }
         }
@@ -169,12 +169,12 @@ namespace Plugins.ResourceManager
         {
             string json = JsonUtility.ToJson(setting, true);
             FileStream fileStream;
-            if (!File.Exists(Setting.PATH))
+            if (!File.Exists(ResourceSetting.PATH))
             {
-                fileStream = File.Create(Setting.PATH);
+                fileStream = File.Create(ResourceSetting.PATH);
                 fileStream.Close();
             }
-            File.WriteAllText(Setting.PATH, json);
+            File.WriteAllText(ResourceSetting.PATH, json);
             AssetDatabase.Refresh();
         }
 

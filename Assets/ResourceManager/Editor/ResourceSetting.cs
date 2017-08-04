@@ -11,7 +11,7 @@ namespace Plugins.ResourceManager
     /// RemSettings
     /// </summary>
     [System.Serializable]
-    public class Setting
+    public class ResourceSetting
     {
         /// <summary>
         /// 输入/输出路径
