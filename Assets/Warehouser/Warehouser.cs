@@ -37,20 +37,21 @@ public class Warehouser
     public static void Start()
     {
         //加载Setting
-        TextAsset asset = Resources.Load<TextAsset>(WarehouserSetting.PATH);
-        if (asset == null)
+        string pathOfSetting = WarehouserUtils.Convert2ResourcesPath(WarehouserSetting.PATH);
+        TextAsset assetOfSetting = Resources.Load<TextAsset>(pathOfSetting); 
+        if (assetOfSetting == null)
         {
             Debug.LogError(Tips.NO_SETTING);
             return;
         }
-        WarehouserSetting setting = JsonUtility.FromJson<WarehouserSetting>(asset.text);
+        WarehouserSetting setting = JsonUtility.FromJson<WarehouserSetting>(assetOfSetting.text);
 
         //加载PathPairs
         PathPairs pairs;
-        string pairsPath = setting.pathParisOutput;
-        if (WarehouserUtils.InResources(pairsPath))
+        if (WarehouserUtils.InResources(setting.pathPairsPath))
         {
-            pairs = Resources.Load<PathPairs>(pairsPath);
+            string resourcesPath = WarehouserUtils.Convert2ResourcesPath(setting.pathPairsPath);
+            pairs = Resources.Load<PathPairs>(resourcesPath);
         }
         else
         {
@@ -59,7 +60,7 @@ public class Warehouser
         }
         if (pairs == null)
         {
-            Debug.LogError(Tips.NO_PAIRS);
+            Debug.LogError(Tips.NO_PAIRS_IN + setting.pathPairsPath);
             return;
         }
 

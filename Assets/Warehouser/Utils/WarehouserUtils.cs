@@ -4,6 +4,7 @@
  * Email:   rickjiangshu@gmail.com
  * Follow:  https://github.com/RickJiangShu
  */
+using System.IO;
 
 /// <summary>
 /// WarehouserUtils
@@ -19,4 +20,18 @@ public class WarehouserUtils
     {
         return path.IndexOf("Resources") != -1;
     }
+
+    /// <summary>
+    /// 将FullName转换成相对于Resources的路径
+    /// </summary>
+    /// <param name="path"></param>
+    /// <returns></returns>
+    public static string Convert2ResourcesPath(string path)
+    {
+        int start = path.IndexOf("Resources");
+        string resourcesPath = path.Substring(start + 10);//10 是Resources/ 的字符数
+        resourcesPath = Path.ChangeExtension(resourcesPath,null);
+        return resourcesPath;
+    }
+
 }

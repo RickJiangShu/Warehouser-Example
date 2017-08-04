@@ -76,7 +76,7 @@ namespace Plugins.Warehouser
                         continue;
 
                     string name = file.Name.Replace(file.Extension, "");
-                    string path = ConvertPath(file.FullName);
+                    string path = WarehouserUtils.Convert2ResourcesPath(file.FullName);
                     pairs.Add(new PathPair(name, path));
                 }
             }
@@ -131,17 +131,6 @@ namespace Plugins.Warehouser
                     return true;
             }
             return false;
-        }
-
-        /// <summary>
-        /// 将FullName转换成相对于Resources的路径
-        /// </summary>
-        /// <param name="fullName"></param>
-        /// <returns></returns>
-        private static string ConvertPath(string fullName)
-        {
-            int start = fullName.IndexOf("Resources" + Path.DirectorySeparatorChar);
-            return fullName.Substring(start);
         }
 
 
