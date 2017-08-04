@@ -17,7 +17,7 @@ namespace Plugins.Warehouser
         public const string SAME_NAME = "重复文件名： {0}";
         public const string NO_SETTING = "找不到" + WarehouserSetting.PATH;
         public const string NO_PAIRS_IN = "找不到";
-        public const string NO_START = "Warehouser 未启动，使用前调用Start()";
+        public const string NO_START = "Warehouser 未启动，使用前调用 Warehouser.Start()";
         public const string NO_GET_PATH = "没有找到路径";
         public const string NO_GET_RESOURCE_OF = "没有找到资源：";
 

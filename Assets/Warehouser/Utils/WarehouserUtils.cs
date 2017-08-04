@@ -18,7 +18,7 @@ public class WarehouserUtils
     /// <returns></returns>
     public static bool InResources(string path)
     {
-        return path.IndexOf("Resources") != -1;
+        return path.Contains("Resources");
     }
 
     /// <summary>
@@ -32,6 +32,13 @@ public class WarehouserUtils
         string resourcesPath = path.Substring(start + 10);//10 是Resources/ 的字符数
         resourcesPath = Path.ChangeExtension(resourcesPath,null);
         return resourcesPath;
+    }
+
+    public static string FullName2AssetPath(string fullName)
+    {
+        int assetIndx = fullName.IndexOf("Assets");
+        string assetPath = fullName.Substring(assetIndx);
+        return assetPath.Replace('\\', '/');
     }
 
 }

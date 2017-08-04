@@ -223,16 +223,16 @@ public class Warehouser
     /// <summary>
     /// 资源是否已缓存
     /// </summary>
-    /// <param name="resName"></param>
+    /// <param name="name"></param>
     /// <returns></returns>
-    public static bool ContainsResource(string resName)
+    public static bool ContainsResource(string name)
     {
         if (!isStarted)
         {
             Debug.LogError(Tips.NO_START);
         }
 
-        return resources.ContainsKey(resName);
+        return resources.ContainsKey(name);
     }
 
 
