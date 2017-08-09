@@ -179,7 +179,7 @@ public class Warehouser
     /// 销毁实例
     /// </summary>
     /// <param name="instace"></param>
-    public static void Destory(Object instace)
+    public static void RemoveKey(Object instace)
     {
         if (!isStarted)
             throw new Exception(Tips.NO_START);

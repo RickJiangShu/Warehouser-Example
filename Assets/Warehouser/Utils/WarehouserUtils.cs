@@ -6,39 +6,43 @@
  */
 using System.IO;
 
-/// <summary>
-/// WarehouserUtils
-/// </summary>
-public class WarehouserUtils
+namespace Plugins.Warehouser
 {
     /// <summary>
-    /// 是否在Resources目录下
+    /// WarehouserUtils
     /// </summary>
-    /// <param name="path"></param>
-    /// <returns></returns>
-    public static bool InResources(string path)
+    public class WarehouserUtils
     {
-        return path.Contains("Resources");
-    }
+        /// <summary>
+        /// 是否在Resources目录下
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        public static bool InResources(string path)
+        {
+            return path.Contains("Resources");
+        }
 
-    /// <summary>
-    /// 将FullName转换成相对于Resources的路径
-    /// </summary>
-    /// <param name="path"></param>
-    /// <returns></returns>
-    public static string Convert2ResourcesPath(string path)
-    {
-        int start = path.IndexOf("Resources");
-        string resourcesPath = path.Substring(start + 10);//10 是Resources/ 的字符数
-        resourcesPath = Path.ChangeExtension(resourcesPath,null);
-        return resourcesPath;
-    }
+        /// <summary>
+        /// 将FullName转换成相对于Resources的路径
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        public static string Convert2ResourcesPath(string path)
+        {
+            int start = path.IndexOf("Resources");
+            string resourcesPath = path.Substring(start + 10);//10 是Resources/ 的字符数
+            resourcesPath = Path.ChangeExtension(resourcesPath, null);
+            return resourcesPath;
+        }
 
-    public static string FullName2AssetPath(string fullName)
-    {
-        int assetIndx = fullName.IndexOf("Assets");
-        string assetPath = fullName.Substring(assetIndx);
-        return assetPath.Replace('\\', '/');
-    }
+        public static string FullName2AssetPath(string fullName)
+        {
+            int assetIndx = fullName.IndexOf("Assets");
+            string assetPath = fullName.Substring(assetIndx);
+            return assetPath.Replace('\\', '/');
+        }
 
+    }
 }
+
