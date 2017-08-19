@@ -1,0 +1,3 @@
+[submodule "Assets/Warehouser"]
+	path = Assets/Warehouser
+	url = git@github.com:RickJiangShu/Warehouser.git
